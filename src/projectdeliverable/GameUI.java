@@ -1,39 +1,45 @@
 package projectdeliverable;
+
 import java.util.Scanner;
-
-
 
 public class GameUI {
     public static void main(String[] args) {
-        BlackjackGame blackjackGame = new BlackjackGame();
+        BlackjackGame game = new BlackjackGame();
         Scanner input = new Scanner(System.in);
+
+        System.out.println("Welcome to Blackjack!");
+
+        // Player registration
+        System.out.print("Enter number of players: ");
+        int numberOfPlayers = input.nextInt();
+        input.nextLine(); // Consume newline
+        for (int i = 1; i <= numberOfPlayers; i++) {
+            System.out.print("Enter name for Player " + i + ": ");
+            String playerName = input.nextLine();
+            game.registerPlayer(playerName);
+        }
+
         boolean playing = true;
-
         while (playing) {
-            blackjackGame.startNewRound();
+            game.startNewRound();
 
-            System.out.println("Your hand:");
-            System.out.println(blackjackGame.getPlayerHand());
-            System.out.println("Dealer is showing: " + blackjackGame.getDealerHand().split(", ")[0]);
-
-            // Player's turn
-            blackjackGame.playerTurn();
-
-            // Check if player has busted
-            if (blackjackGame.getPlayerScore() <= 21) {
-                blackjackGame.dealerTurn();
-                System.out.println("Dealer's hand:");
-                System.out.println(blackjackGame.getDealerHand());
+            // Each player's turn
+            for (Player player : game.getPlayers()) {
+                game.playerTurn(player);
             }
 
-            // Show game result
-            System.out.println(blackjackGame.getGameResult());
+            // Dealer's turn
+            game.dealerTurn();
 
-            // Ask to play again
+            // Determine winners and announce results
+            game.determineWinners();
+
+            // Play again prompt
             System.out.print("Do you want to play again? (y/n): ");
-            String playAgain = input.nextLine();
-            playing = playAgain.equalsIgnoreCase("y");
+            playing = input.nextLine().equalsIgnoreCase("y");
         }
+
+        System.out.println("Thanks for playing!");
         input.close();
     }
 }
